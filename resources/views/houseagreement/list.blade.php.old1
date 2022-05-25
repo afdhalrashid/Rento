@@ -1,0 +1,170 @@
+@extends('layouts.app')
+
+@section('content')
+<form action="{{ route('houseagreement.store')}}" method="POST" enctype="multipart/form-data">
+    @csrf
+    @method('POST')
+    <div id="main">
+        <header class="mb-3">
+            <a href="#" class="burger-btn d-block d-xl-none">
+                <i class="bi bi-justify fs-3"></i>
+            </a>
+        </header>
+
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Oops!</strong> Sila masukkan maklumat berikut: <br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        @foreach($house['agreements'] as $doc)
+        @if($doc->file_for == 'agreement stamping')
+        @php
+        $agreementDoc = $doc
+        @endphp
+        @endif
+        @endforeach
+
+        {{-- @if ($success->any())
+            <div class="alert alert-success">
+                <strong>Yess!</strong> Maklumat rumah berjaya dimasukkan.<br><br>
+                <ul>
+                    @foreach ($success->all() as $success)
+                        <li>{{ $success }}</li>
+        @endforeach
+        </ul>
+    </div>
+    @endif --}}
+
+    @if ($message = Session::get('success'))
+    <div class="alert alert-success alert-block">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>{{ $message }}</strong>
+    </div>
+    @endif
+
+
+
+    <div class="page-heading my-1">
+        @include('layouts.nav_house')
+        <div class="page-title">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 order-md-1 order-last">
+                    <h4>Dokumen</h4>
+                    <p class="text-subtitle text-muted">Senarai Dokumen Penting Rumah </p>
+                </div>
+                <div class="col-lg-4 order-md-2 order-first">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahagreement">
+                        Tambah dokumen perjanjian sewa</button>
+                </div>
+                {{-- <div class="col-12 col-md-6 order-md-2 order-first">
+                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{route('house.index')}}">Senarai Rumah</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Dokumen</li>
+                </ol>
+                </nav>
+            </div> --}}
+        </div>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-sm-3 col-md-3 col-lg-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Maklumat rumah</h4>
+                    </div>
+                    <div class="card-body">
+                        @include('layouts.houseprofile2')
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-9 col-md-9 col-lg-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Agreement Rumah</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Jenis dokumen</th>
+                                    <th scope="col">Upload</th>
+                                    <th scope="col" style="width: 25%">Fail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Agreement Stamping</td>
+                                    <td>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="customFile" name="file_agreement" value="{{old('file_agreement')}}" multiple="">
+                                            <label class="custom-file-label" for="customFile">Choose file</label>
+                                        </div>
+                                        {{-- @isset($agreementDoc)
+                                            <div class="my-2">
+                                                <span class="mx-1">{{$agreementDoc->name}}</span>
+                                        <a class="btn-sm btn-success" href="{{route('downloadagreement',$agreementDoc->id)}}">Download</a>
+                                        <a class="btn-sm btn-info" href="{{route('viewagreement',$agreementDoc->id)}}" target="_blank">Open</a>
+                    </div>
+                    @endisset --}}
+
+                    </td>
+                    <td>
+                        @isset($agreementDoc)
+                        <div class="row">
+                            <div class="my-2">
+                                <i class="fas fa-file fa-2x mx-2" data-toggle="tooltip" data-html="true" title="<em>Fail: </em> <u>{{$agreementDoc->name}}</u>"></i>
+
+
+                                {{-- <span class="mx-1">{{$spaDoc->name}}</span> --}}
+
+                            </div>
+                            <div class="my-2"><a class="btn-sm btn-success" href="{{route('downloaddocs',$agreementDoc->id)}}">Download</a></div>
+                        </div>
+                        @endisset
+                    </td>
+                    </tr>
+
+
+                    </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <div class="row offset-md-5 offset-lg-5">
+                <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+            </div>
+        </div>
+        </div>
+    </section>
+
+
+
+    </div>
+    </div>
+
+</form>
+
+@endsection
+
+@section('js')
+<script>
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    $(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+@endsection

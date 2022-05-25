@@ -1,0 +1,233 @@
+@extends('layouts.app')
+
+@section('css')
+    <style>
+
+    </style>
+@endsection
+
+@section('content')
+<form action="{{ route('housedoc.store')}}" method="POST" enctype="multipart/form-data">
+    @csrf
+    @method('POST')
+    <div id="main">
+        <header class="mb-3">
+            <a href="#" class="burger-btn d-block d-xl-none">
+                <i class="bi bi-justify fs-3"></i>
+            </a>
+        </header>
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <strong>Oops!</strong> Sila masukkan maklumat berikut: <br><br>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        @foreach($house['docs'] as $doc)
+            @if($doc->file_for == 'dokumen SPA')
+                @php
+                    $spaDoc = $doc
+                @endphp
+            @endif
+            @if($doc->file_for == 'dokumen Valuation')
+                @php
+                    $valDoc = $doc
+                @endphp
+            @endif
+            @if($doc->file_for == 'dokumen Loan')
+                @php
+                    $loanDoc = $doc
+                @endphp
+            @endif
+        @endforeach
+
+        {{-- @if ($success->any())
+            <div class="alert alert-success">
+                <strong>Yess!</strong> Maklumat rumah berjaya dimasukkan.<br><br>
+                <ul>
+                    @foreach ($success->all() as $success)
+                        <li>{{ $success }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif --}}
+
+        @if ($message = Session::get('success'))
+        <div class="alert alert-success alert-block">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+                <strong>{{ $message }}</strong>
+        </div>
+        @endif
+
+
+
+        <div class="page-heading my-1">
+            @include('layouts.nav_house')
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h4>Dokumen</h4>
+                        <p class="text-subtitle text-muted">Senarai Dokumen Penting Rumah </p>
+                    </div>
+                    {{-- <div class="col-12 col-md-6 order-md-2 order-first">
+                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{route('house.index')}}">Senarai Rumah</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Dokumen</li>
+                            </ol>
+                        </nav>
+                    </div> --}}
+                </div>
+            </div>
+            <section class="section">
+                <div class="row">
+                    <div class="col-sm-3 col-md-3 col-lg-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Maklumat rumah</h4>
+                            </div>
+                            <div class="card-body">
+                                @include('layouts.houseprofile2')
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-9 col-md-9 col-lg-9">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Dokumen rumah</h4>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                      <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Jenis dokumen</th>
+                                        <th scope="col">Upload</th>
+                                        <th scope="col" style="width: 25%">Fail</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <th scope="row">1</th>
+                                        <td>SPA</td>
+                                        <td>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="customFile" name="file_spa" value="{{old('file_spa')}}" multiple="">
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                            </div>
+
+
+                                        </td>
+                                        <td>
+                                            @isset($spaDoc)
+                                            <div class="row">
+                                            <div class="my-2">
+                                                <i class="fas fa-file fa-2x mx-2"  data-toggle="tooltip" data-html="true" title="<em>Fail: </em> <u>{{$spaDoc->name}}</u>"></i>
+
+
+                                                {{-- <span class="mx-1">{{$spaDoc->name}}</span> --}}
+
+                                            </div>
+                                            <div class="my-2"><a class="btn-sm btn-success" href="{{route('downloaddocs',$spaDoc->id)}}">Download</a></div>
+                                            </div>
+                                            @endisset
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="row">2</th>
+                                        <td>Valuation</td>
+                                        <td>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="customFile" name="file_valuation" value="{{old('file_valuation')}}" multiple="">
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                              </div>
+                                              {{-- @isset($valDoc)
+                                              <div class="my-2">
+                                                <span class="mx-1">{{$valDoc->name}}</span>
+                                              <a class="btn-sm btn-success" href="{{route('downloaddocs',$valDoc->id)}}">Download</a>
+                                              </div>
+                                              @endisset --}}
+                                        </td>
+                                        <td>
+                                            @isset($valDoc)
+                                            <div class="row">
+                                            <div class="my-2">
+                                                <i class="fas fa-file fa-2x mx-2"  data-toggle="tooltip" data-html="true" title="<em>Fail: </em> <u>{{$valDoc->name}}</u>"></i>
+
+
+                                                {{-- <span class="mx-1">{{$spaDoc->name}}</span> --}}
+
+                                            </div>
+                                            <div class="my-2"><a class="btn-sm btn-success" href="{{route('downloaddocs',$valDoc->id)}}">Download</a></div>
+                                            </div>
+                                            @endisset
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="row">3</th>
+                                        <td>Loan</td>
+                                        <td>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="customFile" name="file_loan" value="{{old('file_loan')}}" multiple="">
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                            </div>
+                                            {{-- @isset($loanDoc)
+                                            <div class="my-2">
+                                                <span class="mx-1">{{$loanDoc->name}}</span><a class="btn-sm btn-success" href="{{route('downloaddocs',$loanDoc->id)}}">Download</a>
+                                            </div>
+                                            @endisset --}}
+
+                                        </td>
+                                        <td>
+                                            @isset($loanDoc)
+                                            <div class="row">
+                                            <div class="my-2">
+                                                <i class="fas fa-file fa-2x mx-2"  data-toggle="tooltip" data-html="true" title="<em>Fail: </em> <u>{{$loanDoc->name}}</u>"></i>
+
+
+                                                {{-- <span class="mx-1">{{$spaDoc->name}}</span> --}}
+
+                                            </div>
+                                            <div class="my-2"><a class="btn-sm btn-success" href="{{route('downloaddocs',$loanDoc->id)}}">Download</a></div>
+                                            </div>
+                                            @endisset
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                        <div class="row offset-md-5 offset-lg-5">
+                            <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                        </div>
+                    </div>
+                </div></section>
+
+
+
+        </div>
+    </div>
+
+</form>
+
+@endsection
+
+@section('js')
+<script>
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    </script>
+@endsection
